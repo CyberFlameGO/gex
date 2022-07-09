@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     id("org.graalvm.buildtools.native") version "0.9.12"
+
 }
 
 group = "au.id.wale.enter.the.gecko"
@@ -27,3 +29,22 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+graalvmNative {
+    binaries {
+        named("main") {
+            // Main options
+            imageName.set("gex")
+            mainClass.set("au.id.wale.enter.the.gecko.MainKt")
+
+            excludeConfig.put(file("$buildDir/libs/*.jar"), listOf("META-INF/native-image/*", "config/*"))
+
+            // Advanced options
+            buildArgs.add("-H:Extra")
+            jvmArgs.add("flag")
+
+            useFatJar.set(true)
+        }
+    }
+}
+
